@@ -1,22 +1,25 @@
-#Check
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
 from sklearn import svm
 
-PATH = ' '
-with open(PATH) as f:
-    lines = f.readlines()
+#participant_path contains the location of all the sessions for participant 1.
+participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P1_sitting'
 
-startTimes = []
-durations = []
-labels = []
-
-for line in lines:
-    lineArray = line.split(" ")
-    startTimes.append(lineArray.remove)
-    durations.append(lineArray.remove)
-    labels.append(lineArray.remove)
+startTimes = []*9
+durations = []*9
+labels = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+txt_paths = []
+for i in [1, 12] :
+    txt_paths.append(participant_path + "/session_" + i + "/facial_expr_timestamp.txt")
+    for txtfile in txt_paths:
+        with open(txtfile) as f:
+            lines = f.readlines()
+            for line in lines:
+                lineArray = line.split(", ")
+                index = lineArray[2]
+                startTimes[index].append(float(lineArray[0]))
+                durations[index].append(float(lineArray[1]))
 
 xx, yy = np.meshgrid(np.linspace(-5, 5, 500), np.linspace(-5, 5, 500))
 # Generate train data
@@ -71,4 +74,4 @@ plt.xlabel(
     "error train: %d/200 ; errors novel regular: %d/40 ; errors novel abnormal: %d/40"
     % (n_error_train, n_error_test, n_error_outliers)
 )
-plt.show()
+plt.savefig("plot.png")
