@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager
 from sklearn import svm
 
+# test comment
 PATH = ' '
 with open(PATH) as f:
     lines = f.readlines()
