@@ -76,6 +76,7 @@ expression_index = 0
 training_data = []
 testing_data = []
 testing_answers = []
+testing_expressions = []
 
 npy_file_path = '/data/smart_eyewear/user_study/glasses_P' + str(participant_number) + '_sitting/'
 npy_1 = np.load(npy_file_path + 'facial_expression_1_fmcw_diff_CIR.npy')
@@ -108,12 +109,14 @@ for exp in range(0, 8 + 1):
         random_session_number = random.randint(total_sessions - 2 + 1, total_sessions)
         session_length = len(expression_map[exp][random_session_number-1])
         random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
-        testing_answers.append(exp)
+        testing_answers.append(-1)
+        testing_expressions.append(exp)
         testing_data.append(get_npy_frame(random_npy_index, random_session_number))
     else:
         for session_number in range(total_sessions - 2 + 1, total_sessions + 1):
                 for npy_index in expression_map[exp][session_number - 1]:
-                        testing_answers.append(exp)
+                        testing_answers.append(1)
+                        testing_expressions.append(exp)
                         testing_data.append(get_npy_frame(npy_index, session_number))
      
 # go to the right expression to get the correct 2d array
