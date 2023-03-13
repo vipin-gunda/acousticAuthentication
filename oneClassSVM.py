@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager
 from sklearn import svm
 
-#participant_path contains the location of all the sessions for participant 1.
-participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P1_sitting'
+# ADJUSTABLE: PARTICIPANT NUMBER
+participant_number = 1
+#participant_path contains the location of all the sessions for the participant in question.
+participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P'+ str(participant_number) +'_sitting'
 
 sync1 = participant_path + "/wav_csv_sync_1.txt"
 sync2 = participant_path + "/wav_csv_sync_2.txt"
@@ -16,7 +18,6 @@ with open(sync1) as f1:
     tv1 = float(lines.pop(0).split(",").pop(0))
     group_one_count += 1
     for line in lines:
-        print(line)
         group_one_count += 1
 
 print("Group 1 Session Count: " + str(group_one_count))
@@ -74,9 +75,17 @@ expression_index = 0
 training_data = []
 testing_data = []
 
-def get_npy_frame(index: float, session: int):
-    # TODO: Return npy frame from correct file
-    pass
+npy_file_path = '/data/smart_eyewear/user_study/glasses_P' + str(participant_number) + '_sitting/'
+npy_1 = np.load(npy_file_path + 'facial_expression_1_fmcw_diff_CIR.npy')
+npy_2 = np.load(npy_file_path + 'facial_expression_2_fmcw_diff_CIR.npy')
+duration = int(0.233 * 50000 / 600)
+
+# session #1-12
+def get_npy_frame(ind: int, session: int):
+    if session <= group_one_count:
+        return npy_1[:, ind:ind + duration + 1]   
+    else:
+        return npy_2[:, ind:ind + duration + 1]
 
 # for every other expression (other than the chosen expression index)
     # get random session number between 1-10, get random npy index
