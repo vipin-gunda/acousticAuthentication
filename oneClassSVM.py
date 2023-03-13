@@ -82,7 +82,7 @@ testing_expressions = []
 npy_file_path = '/data/smart_eyewear/user_study/glasses_P' + str(participant_number) + '_sitting/'
 npy_1 = np.load(npy_file_path + 'facial_expression_1_fmcw_diff_CIR.npy')
 npy_2 = np.load(npy_file_path + 'facial_expression_2_fmcw_diff_CIR.npy')
-duration = int(0.233 * 50000 / 600)
+duration = int(2.2333 * 50000 / 600)
 
 # session #1-12
 def get_npy_frame(ind: int, session: int):
@@ -119,6 +119,8 @@ for exp in range(0, 8 + 1):
 
 print(training_data)
 print(testing_data)
+print(testing_answers)
+print(testing_expressions)
 
 # PART 3: TRAIN SVM ON TRAINING DATA
 # train SVM on training_data
