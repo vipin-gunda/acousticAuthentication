@@ -9,6 +9,7 @@ participant_number = 1
 #participant_path contains the location of all the sessions for the participant in question.
 participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P'+ str(participant_number) +'_sitting'
 
+# PART 1: ORGANIZE RAW DATA INTO EXPRESSIONS + SESSIONS HASHMAP
 sync1 = participant_path + "/wav_csv_sync_1.txt"
 sync2 = participant_path + "/wav_csv_sync_2.txt"
 
@@ -70,8 +71,8 @@ for i in range(group_one_count + 1, total_sessions + 1):
 print("Final Expression Map")
 print(expression_map)
 
-# TO FEED INTO SVM
-# Set correct expression you're trying to detect here
+# PART 2: READING HASHMAP TO CREATE NPY TRAINING DATA
+# ADJUSTABLE: Set correct expression you're trying to detect here
 expression_index = 0
 training_data = []
 testing_data = []
@@ -88,9 +89,6 @@ def get_npy_frame(ind: int, session: int):
     else:
         return npy_2[:, ind:ind + duration + 1]
 
-# for every other expression (other than the chosen expression index)
-    # get random session number between 1-10, get random npy index
-    # add to data
 for exp in range(0, 8 + 1):
     if exp != expression_index:
         random_session_number = random.randint(1, total_sessions-2)
@@ -112,16 +110,15 @@ for exp in range(0, 8 + 1):
         for session_number in range(total_sessions - 2 + 1, total_sessions + 1):
                 for npy_index in expression_map[exp][session_number - 1]:
                         testing_data.append(get_npy_frame(npy_index, session_number))
-     
-# go to the right expression to get the correct 2d array
-# go through each session and with each given npy index
-    # for first 10 sessions, index into the correct npy file with it (first 6 sessions are in first file, group 2 in second)
-        # for x: processing (check w/ ke)
-        # get full y
-    # concat that frame to the data
-    # for last two sessions, do same indexing but add into testing data
 
-# feed all that data into the svm
+print(training_data)
+print(testing_data)
+
+# PART 3: TRAIN SVM ON TRAINING DATA
+# train SVM on training_data
+# get results w/ testing data
+# get accuracy
+# visualize SVM
 
 xx, yy = np.meshgrid(np.linspace(-5, 5, 500), np.linspace(-5, 5, 500))
 # Generate train data
