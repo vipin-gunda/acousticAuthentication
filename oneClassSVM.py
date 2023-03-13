@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
 from sklearn import svm
+import random
 
 #participant_path contains the location of all the sessions for participant 1.
 participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P1_sitting'
@@ -75,13 +76,32 @@ training_data = []
 testing_data = []
 
 def get_npy_frame(index: float, session: int):
-    # TODO: Return npy frame from correct file
     pass
-
 # for every other expression (other than the chosen expression index)
     # get random session number between 1-10, get random npy index
     # add to data
+for exp in range(0, 8 + 1):
+    if exp != expression_index:
+        random_session_number = random.randint(1, total_sessions-2)
+        session_length = len(expression_map[exp][random_session_number-1])
+        random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
+        training_data.append(get_npy_frame(random_npy_index, random_session_number))
+    else:
+        for session_number in range(1, total_sessions - 2 + 1):
+                for npy_index in expression_map[exp][session_number - 1]:
+                        training_data.append(get_npy_frame(npy_index, session_number))
 
+for exp in range(0, 8 + 1):
+    if exp != expression_index:
+        random_session_number = random.randint(total_sessions - 2 + 1, total_sessions)
+        session_length = len(expression_map[exp][random_session_number-1])
+        random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
+        testing_data.append(get_npy_frame(random_npy_index, random_session_number))
+    else:
+        for session_number in range(total_sessions - 2 + 1, total_sessions + 1):
+                for npy_index in expression_map[exp][session_number - 1]:
+                        testing_data.append(get_npy_frame(npy_index, session_number))
+     
 # go to the right expression to get the correct 2d array
 # go through each session and with each given npy index
     # for first 10 sessions, index into the correct npy file with it (first 6 sessions are in first file, group 2 in second)
@@ -145,4 +165,4 @@ plt.xlabel(
     "error train: %d/200 ; errors novel regular: %d/40 ; errors novel abnormal: %d/40"
     % (n_error_train, n_error_test, n_error_outliers)
 )
-plt.savefig("plot.png")
+#plt.savefig("plot.png")
