@@ -51,7 +51,7 @@ for i in range(1, group_one_count + 1):
             info_list = line.split(", ")
             t = float(info_list[0])
             exp = int(info_list[2])
-            npy_index = ((t - tv1) * 50000 + ta1) / 600
+            npy_index = int(((t - tv1) * 50000 + ta1) / 600)
             expression_map[exp][i-1].append(npy_index)
 
 for i in range(group_one_count + 1, total_sessions + 1):
@@ -62,7 +62,7 @@ for i in range(group_one_count + 1, total_sessions + 1):
             info_list = line.split(", ")
             t = float(info_list[0])
             exp = int(info_list[2])
-            npy_index = ((t - tv2) * 50000 + ta2) / 600
+            npy_index = int(((t - tv2) * 50000 + ta2) / 600)
             expression_map[exp][i-1].append(npy_index)
 
 print("Final Expression Map")
@@ -145,4 +145,4 @@ plt.xlabel(
     "error train: %d/200 ; errors novel regular: %d/40 ; errors novel abnormal: %d/40"
     % (n_error_train, n_error_test, n_error_outliers)
 )
-plt.savefig("/data/vipin/acousticAuthentication/output/plot.png")
+plt.savefig("plot.png")
