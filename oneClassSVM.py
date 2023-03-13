@@ -68,6 +68,30 @@ for i in range(group_one_count + 1, total_sessions + 1):
 print("Final Expression Map")
 print(expression_map)
 
+# TO FEED INTO SVM
+# Set correct expression you're trying to detect here
+expression_index = 0
+training_data = []
+testing_data = []
+
+def get_npy_frame(index: float, session: int):
+    # TODO: Return npy frame from correct file
+    pass
+
+# for every other expression (other than the chosen expression index)
+    # get random session number between 1-10, get random npy index
+    # add to data
+
+# go to the right expression to get the correct 2d array
+# go through each session and with each given npy index
+    # for first 10 sessions, index into the correct npy file with it (first 6 sessions are in first file, group 2 in second)
+        # for x: processing (check w/ ke)
+        # get full y
+    # concat that frame to the data
+    # for last two sessions, do same indexing but add into testing data
+
+# feed all that data into the svm
+
 xx, yy = np.meshgrid(np.linspace(-5, 5, 500), np.linspace(-5, 5, 500))
 # Generate train data
 X = 0.3 * np.random.randn(100, 2)
