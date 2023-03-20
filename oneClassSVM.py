@@ -83,14 +83,16 @@ testing_expressions = []
 npy_file_path = '/data/smart_eyewear/user_study/glasses_P' + str(participant_number) + '_sitting/'
 npy_1 = np.load(npy_file_path + 'facial_expression_1_fmcw_diff_CIR.npy')
 npy_2 = np.load(npy_file_path + 'facial_expression_2_fmcw_diff_CIR.npy')
-duration = int(2.2333 * 50000 / 600)
+duration = int(2.5 * 50000 / 600)
 
 # session #1-12
 def get_npy_frame(ind: int, session: int):
+    shift_seconds = random.uniform(0, 0.5) # randomly generation a float between 0 to 0.5, shift in seconds
+    shift_scaled = int(shift_seconds * 50000/600)
     if session <= group_one_count:
-        return npy_1[:, ind:ind + duration + 1].flatten("F") #CHECK FLATTENING
+        return npy_1[:, ind + shift_scaled:ind + duration + shift_scaled + 1].flatten("F") #CHECK FLATTENING
     else:
-        return npy_2[:, ind:ind + duration + 1].flatten("F") #CHECK FLATTENING
+        return npy_2[:, ind + shift_scaled:ind + duration + shift_scaled + 1].flatten("F") #CHECK FLATTENING
 
 for exp in range(0, 8 + 1):
     if exp != expression_index:
