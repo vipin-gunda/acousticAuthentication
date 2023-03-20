@@ -120,10 +120,10 @@ for exp in range(0, 8 + 1):
                         testing_expressions.append(exp)
                         testing_data.append(get_npy_frame(npy_index, session_number))
 
-print(training_data)
-print(testing_data)
-print(testing_answers)
-print(testing_expressions)
+print(training_data) #set of training data
+print(testing_data) #set of testing data
+print(testing_answers) #set of answers (1 or 0)
+print(testing_expressions) #set of expressions (0...8)
 
 # PART 3: TRAIN SVM ON TRAINING DATA
 # train SVM on training_data
