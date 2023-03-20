@@ -1,0 +1,13 @@
+# compile_data.py
+Read raw .npy data and save in `data` folder as training and testing datasets.
+For each expression, there are two files - training_x.txt and testing_x.txt where x is the corresponding expression index.
+In each dataset for expression x, there is every instance of expression x (from all sessions) and exactly one of every other expression (randomly selected) for negative examples. 
+
+# CNN_feature_extraction.py
+Read training datasets compiled from compile_data.py and train/save a CNN feature extractor for each expression.
+Use saved CNN to get features for each training and testing data of each expression.
+Models will be saved into the `models` folder and training/testing features will be saved into the `extracted features` folder.
+
+# one_Class_SVM.py
+Read training features of expression and train/save SVM (for expression) into the `models` folder.
+Test on testing features of expression as well.
