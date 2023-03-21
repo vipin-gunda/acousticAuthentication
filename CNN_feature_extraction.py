@@ -1,3 +1,6 @@
+import numpy as np
+import json
+
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 
@@ -7,23 +10,37 @@ from tensorflow.keras import datasets, layers, models
 # step 2: later add a CNN check - if CNN is being called and it was already saved (in models folder), just load that pre-trained model and build features from it
 # need to double check on shape of data needed
 
+# todo: need to get validation data for CNN model
+
 # ADJUSTABLE PARAMS: PARTICIPANT AND EXPRESSION NUMBER
 participant_number = 1
 expression_index = 0
 
 # PART 1: PARSE CORRESPONDING DATA
 testing_data_path = 'data/testing_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
+training_labels_path = 'data/training_labels_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
 training_data_path = 'data/training_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
+testing_labels_path = 'data/testing_labels_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
 
 with open(training_data_path) as f:
     content = f.read()
     if content:
         training_data = np.array(json.loads(content))
 
+with open(training_labels_path) as f:
+    content = f.read()
+    if content:
+        training_labels = np.array(json.loads(content))
+
 with open(testing_data_path) as f:
     content = f.read()
     if content:
         testing_data = np.array(json.loads(content))
+        
+with open(testing_labels_path) as f:
+    content = f.read()
+    if content:
+        testing_labels = np.array(json.loads(content))
 
 # PART 2: DEFINE CNN 
 model = models.Sequential()
@@ -40,8 +57,7 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(training_data, train_labels, epochs=10, 
-                    validation_data=(test_images, test_labels))
+history = model.fit(training_data, training_labels, epochs=10)
 
 # PART 4: GET FEATURES AND WRITE THEM TO EXTRACTED_FEATURES FOLDER
 # Get features for both training and testing
