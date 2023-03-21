@@ -1,47 +1,49 @@
 import tensorflow as tf
-
 from tensorflow.keras import datasets, layers, models
-import matplotlib.pyplot as plt
 
-# inspo from this link: https://www.tensorflow.org/tutorials/images/cnn
+#https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
 
-# 1. do some data cleaning (put it in correct form for input)
-# split training, validation, testing datasets
-# paper used spectrogram of the segmented signal as input
+# step 1: get CNN to run in the first place (hard saving the features and model)
+# step 2: later add a CNN check - if CNN is being called and it was already saved (in models folder), just load that pre-trained model and build features from it
+# need to double check on shape of data needed
 
-# 2. create all cnn layers
-# paper has a list of 14 layers
-# just do the most basic CNN for now
-# remember to remove the last layer! only get new representation, not result
+# ADJUSTABLE PARAMS: PARTICIPANT AND EXPRESSION NUMBER
+participant_number = 1
+expression_index = 0
 
+# PART 1: PARSE CORRESPONDING DATA
+testing_data_path = 'data/testing_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
+training_data_path = 'data/training_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
+
+with open(training_data_path) as f:
+    content = f.read()
+    if content:
+        training_data = np.array(json.loads(content))
+
+with open(testing_data_path) as f:
+    content = f.read()
+    if content:
+        testing_data = np.array(json.loads(content))
+
+# PART 2: DEFINE CNN 
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-# do not include dense layers, no need to classify
-# might need to flatten last output?
+model.summary()
 
-# 3. pass all training dataset into cnn to train (compile and train model)
+# PART 3: TRAIN CNN
+# Need to get training_labels and testing_labels
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(train_images, train_labels, epochs=10, 
+history = model.fit(training_data, train_labels, epochs=10, 
                     validation_data=(test_images, test_labels))
 
-# now, can use this model to create another representation to pass into SVM
-# that will presumably work better
+# PART 4: GET FEATURES AND WRITE THEM TO EXTRACTED_FEATURES FOLDER
+# Get features for both training and testing
 
-# 4. test model here
-plt.plot(history.history['accuracy'], label='accuracy')
-plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.ylim([0.5, 1])
-plt.legend(loc='lower right')
-
-test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
-
-print(test_acc)
+# PART 5: SAVE CNN MODEL
