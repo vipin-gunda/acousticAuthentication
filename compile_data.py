@@ -119,15 +119,12 @@ for exp in range(0, 8 + 1):
 training_data = np.array(training_data)
 testing_data = np.array(testing_data)
 
-current_path = os.getcwd()
-data_path = current_path + "/data"
-
-if not os.path.exists(data_path):
+if not os.path.exists('data'):
    os.makedirs('data') 
    
-with open(data_path + "/training_data_" + str(expression_index) + ".txt", "w") as txt:
+with open("data/training_data_p" + str(participant_number) + "_e" + str(expression_index) + ".txt", "w") as txt:
  json.dump(training_data.tolist(), txt)
 
 
-with open(data_path + "/testing_data_" + str(expression_index) + ".txt", "w") as txt:
+with open("data/testing_data_p" + str(participant_number) +"_e" + str(expression_index) + ".txt", "w") as txt:
  json.dump(testing_data.tolist(), txt)
