@@ -3,6 +3,7 @@ import json
 
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
+from keras.utils.np_utils import to_categorical # convert to one-hot-encoding
 
 #https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
 
@@ -25,41 +26,51 @@ testing_labels_path = 'data/testing_labels_p'+str(participant_number)+"_e"+str(e
 with open(training_data_path) as f:
     content = f.read()
     if content:
-        training_data = np.array(json.loads(content))
+        training_data = np.array(json.loads(content)).reshape(-1, 1200, 209, 1)
 
 with open(training_labels_path) as f:
     content = f.read()
     if content:
-        training_labels = np.array(json.loads(content))
+        training_labels = to_categorical(np.array(json.loads(content)), num_classes=2)
 
 with open(testing_data_path) as f:
     content = f.read()
     if content:
-        testing_data = np.array(json.loads(content))
+        testing_data = np.array(json.loads(content)).reshape(-1, 1200, 209, 1)
         
 with open(testing_labels_path) as f:
     content = f.read()
     if content:
-        testing_labels = np.array(json.loads(content))
+        testing_labels = to_categorical(np.array(json.loads(content)), num_classes=2)
+        
+# DATA SHAPES
+print(training_data.shape)
+print(training_labels.shape)
+print(testing_data.shape)
+print(testing_labels.shape)
 
 # PART 2: DEFINE CNN 
+input_shape = (None, 1200, 209, 1)
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(1200, 209, 1), data_format="channels_last"))
+model.add(layers.MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.summary()
 
 # PART 3: TRAIN CNN
 # Need to get training_labels and testing_labels
 model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              loss=tf.keras.losses.BinaryCrossentropy(),
               metrics=['accuracy'])
 
-history = model.fit(training_data, training_labels, epochs=10)
+history = model.fit(training_data, training_labels, epochs=10, validation_data=(testing_data, testing_labels))
 
 # PART 4: GET FEATURES AND WRITE THEM TO EXTRACTED_FEATURES FOLDER
 # Get features for both training and testing
 
 # PART 5: SAVE CNN MODEL
+
+# possible issues
+# is it because removing last layer of cnn? so model not able to compare output against actual layer
+# potentionally have to use tensors instead of numpy arrays

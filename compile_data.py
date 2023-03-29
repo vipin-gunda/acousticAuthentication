@@ -75,9 +75,9 @@ def get_npy_frame(ind: int, session: int):
    shift_seconds = random.uniform(0, 0.5) # randomly generation a float between 0 to 0.5, shift in seconds
    shift_scaled = int(shift_seconds * 50000/600)
    if session <= group_one_count:
-       return npy_1[:, ind + shift_scaled:ind + duration + shift_scaled + 1].flatten("F") #CHECK FLATTENING
+       return npy_1[:, ind + shift_scaled:ind + duration + shift_scaled + 1]
    else:
-       return npy_2[:, ind + shift_scaled:ind + duration + shift_scaled + 1].flatten("F") #CHECK FLATTENING
+       return npy_2[:, ind + shift_scaled:ind + duration + shift_scaled + 1]
 
 # Compiling Training Data
 for exp in range(0, 8 + 1):
