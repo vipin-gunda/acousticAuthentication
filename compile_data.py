@@ -86,7 +86,7 @@ for exp in range(0, 8 + 1):
        session_length = len(expression_map[exp][random_session_number-1])
        random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
        training_data.append(get_npy_frame(random_npy_index, random_session_number))
-       training_labels.append(-1)
+       training_labels.append(0)
    else:
        for session_number in range(1, total_sessions - 2 + 1):
                for npy_index in expression_map[exp][session_number - 1]:
@@ -99,7 +99,7 @@ for exp in range(0, 8 + 1):
        random_session_number = random.randint(total_sessions - 2 + 1, total_sessions)
        session_length = len(expression_map[exp][random_session_number-1])
        random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
-       testing_labels.append(-1)
+       testing_labels.append(0)
        testing_data.append(get_npy_frame(random_npy_index, random_session_number))
    else:
        for session_number in range(total_sessions - 2 + 1, total_sessions + 1):
