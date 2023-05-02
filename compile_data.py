@@ -3,124 +3,69 @@ import random
 import json
 import os
 
-# ADJUSTABLE: PARTICIPANT NUMBER + EXPRESSION INDEX
-participant_number = 1
-expression_index = 0
-#participant_path contains the location of all the sessions for the participant in question.
-participant_path = '/data/shawn/authen_acoustic_2023sp/smart_eyewear_user_study/glasses_P'+ str(participant_number) +'_sitting'
+# PART 1: READ IN TIMESTAMPS FROM ALL PARTICIPANTS (2D ARRAY OF TUPLES)
+npy_inds = []
+p_count = 0
+while os.path.isfile('timestamps/0417/timestamps_p'+str(p_count)+'.txt'):
+    npy_inds += [[]]  # add new row
+    with open('timestamps/0417/timestamps_p'+str(p_count)+'.txt') as f1:
+        lines = f1.readlines()
+        for i in range(0, len(lines), 2):
+            # add start and end timestamps as a tuple, with convert to npy index adjustment
+            npy_inds[p_count] += [(int(int(lines[i].split(" ")[0])/600),
+                                   int(int(lines[i+1].split(" ")[0])/600))]
+    p_count += 1
 
-# PART 1: ORGANIZE RAW DATA INTO EXPRESSIONS + SESSIONS HASHMAP
-sync1 = participant_path + "/wav_csv_sync_1.txt"
-sync2 = participant_path + "/wav_csv_sync_2.txt"
+# PART 2: FOR EACH PARTICIPANT, TAKE NPY SNIPPET AND ADD TO TRAINING DATA
+train = []
+train_participants = []
+test = []
+test_participants = []
 
-group_one_count = 0
-with open(sync1) as f1:
-   lines = f1.readlines()
-   ta1 = float(lines.pop(0))
-   tv1 = float(lines.pop(0).split(",").pop(0))
-   group_one_count += 1
-   for line in lines:
-       group_one_count += 1
 
-group_two_count = 0
-with open(sync2) as f2:
-   lines = f2.readlines()
-   ta2 = float(lines.pop(0))
-   tv2 = float(lines.pop(0).split(",").pop(0))
-   group_two_count += 1
-   for line in lines:
-       group_two_count += 1
+def get_npy_frame(s_ind: int, e_ind: int, p_ind: int, npy: np.array):
+    # randomly generation a float between 0 to 0.5, shift in seconds
+    shift_seconds = int(random.uniform(0, 0.5)*50000/600)
+    buffer = int(1.5*50000/600)
+    duration = int(26*50000/600)
+    return npy[:, s_ind + buffer + shift_seconds: s_ind + buffer + duration + shift_seconds + 1]
 
-expression_map = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
 
-total_sessions = group_one_count + group_two_count
-for i in range(0, 8 + 1):
-   for j in range(1, total_sessions + 1):
-       expression_map[i].append([])
+npy_file_path = '/data/vipin/acousticAuthentication/pilot_study/0417_data/'
 
-for i in range(1, group_one_count + 1):
-   txt_path = participant_path + "/session_" + str(i) + "/facial_expr_timestamp.txt"
-   with open(txt_path) as txt:
-       lines = txt.readlines()
-       for line in lines:
-           info_list = line.split(", ")
-           t = float(info_list[0])
-           exp = int(info_list[2])
-           npy_index = int(((t - tv1) * 50000 + ta1) / 600)
-           expression_map[exp][i-1].append(npy_index)
+for p in range(p_count):
+    # p+1 just because of how data files are named
+    npy_arr = np.load(npy_file_path + 'facial_expression_' +
+                      str(p+1) + '_fmcw_diff_CIR.npy')
+    for i, (s, e) in enumerate(npy_inds[p]):
+        npy_frame = get_npy_frame(s, e, p, npy_arr)
+        if i < len(npy_inds[p])*2/3:  # first 2/3 go to training data
+            train += [npy_frame]
+            train_participants += [p]
+        else:  # last 1/3 go into testing data
+            test += [npy_frame]
+            test_participants += [p]
 
-for i in range(group_one_count + 1, total_sessions + 1):
-   txt_path = participant_path + "/session_" + str(i) + "/facial_expr_timestamp.txt"
-   with open(txt_path) as txt:
-       lines = txt.readlines()
-       for line in lines:
-           info_list = line.split(", ")
-           t = float(info_list[0])
-           exp = int(info_list[2])
-           npy_index = int(((t - tv2) * 50000 + ta2) / 600)
-           expression_map[exp][i-1].append(npy_index)
+print(len(train))
+print(len(train[0]))
+# make this 2166 ? refer to slack
+print(len(train[0][0]))
 
-# PART 2: READING HASHMAP TO CREATE NPY TRAINING DATA
-training_data = []
-training_labels = []
-testing_data = []
-testing_labels = []
+with open("data/training_data.txt", "w") as txt:
+    json.dump(np.array(train).tolist(), txt)
+with open("data/testing_data.txt", "w") as txt:
+    json.dump(np.array(test).tolist(), txt)
 
-npy_file_path = '/data/smart_eyewear/user_study/glasses_P' + str(participant_number) + '_sitting/'
-npy_1 = np.load(npy_file_path + 'facial_expression_1_fmcw_diff_CIR.npy')
-npy_2 = np.load(npy_file_path + 'facial_expression_2_fmcw_diff_CIR.npy')
-duration = int(2.5 * 50000 / 600)
-
-def get_npy_frame(ind: int, session: int):
-   shift_seconds = random.uniform(0, 0.5) # randomly generation a float between 0 to 0.5, shift in seconds
-   shift_scaled = int(shift_seconds * 50000/600)
-   if session <= group_one_count:
-       return npy_1[:, ind + shift_scaled:ind + duration + shift_scaled + 1]
-   else:
-       return npy_2[:, ind + shift_scaled:ind + duration + shift_scaled + 1]
-
-# Compiling Training Data
-for exp in range(0, 8 + 1):
-   if exp != expression_index:
-       random_session_number = random.randint(1, total_sessions-2)
-       session_length = len(expression_map[exp][random_session_number-1])
-       random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
-       training_data.append(get_npy_frame(random_npy_index, random_session_number))
-       training_labels.append(0)
-   else:
-       for session_number in range(1, total_sessions - 2 + 1):
-               for npy_index in expression_map[exp][session_number - 1]:
-                        training_labels.append(1)
-                        training_data.append(get_npy_frame(npy_index, session_number))
-
-# Compiling Testing Data
-for exp in range(0, 8 + 1):
-   if exp != expression_index:
-       random_session_number = random.randint(total_sessions - 2 + 1, total_sessions)
-       session_length = len(expression_map[exp][random_session_number-1])
-       random_npy_index = expression_map[exp][random_session_number-1][random.randint(0, session_length-1)]
-       testing_labels.append(0)
-       testing_data.append(get_npy_frame(random_npy_index, random_session_number))
-   else:
-       for session_number in range(total_sessions - 2 + 1, total_sessions + 1):
-               for npy_index in expression_map[exp][session_number - 1]:
-                       testing_labels.append(1)
-                       testing_data.append(get_npy_frame(npy_index, session_number))
-
-# PART 3: WRITING TRAINING AND TESTING DATA TO DATA FOLDER
-training_data = np.array(training_data)
-training_labels = np.array(training_labels)
-testing_data = np.array(testing_data)
-testing_labels = np.array(testing_labels)
-
+# PART 3: BUILD TRAINING/TESTING LABELS FOR ALL PARTICIPANTS
 if not os.path.exists('data'):
-   os.makedirs('data') 
-   
-with open("data/training_data_p" + str(participant_number) + "_e" + str(expression_index) + ".txt", "w") as txt:
-    json.dump(training_data.tolist(), txt)
-with open("data/training_labels_p" + str(participant_number) + "_e" + str(expression_index) + ".txt", "w") as txt:
-    json.dump(training_labels.tolist(), txt)
-with open("data/testing_data_p" + str(participant_number) +"_e" + str(expression_index) + ".txt", "w") as txt:
-    json.dump(testing_data.tolist(), txt)
-with open("data/testing_labels_p" + str(participant_number) +"_e" + str(expression_index) + ".txt", "w") as txt:
-    json.dump(testing_labels.tolist(), txt)
+    os.makedirs('data')
+
+for p in range(p_count):
+    train_labels_p = [1 if i == p else 0 for i in train_participants]
+    test_labels_p = [1 if i == p else 0 for i in test_participants]
+
+    with open("data/training_labels_p" + str(p) + ".txt", "w") as txt:
+        json.dump(train_labels_p, txt)
+
+    with open("data/testing_labels_p" + str(p) + ".txt", "w") as txt:
+        json.dump(test_labels_p, txt)
