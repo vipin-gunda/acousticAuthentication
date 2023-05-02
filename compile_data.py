@@ -49,9 +49,9 @@ for p in range(p_count):
 if not os.path.exists('data'):
     os.makedirs('data')
 
-with open("data/training_data.txt", "w") as txt:
+with open("data/0417/training_data.txt", "w") as txt:
     json.dump(np.array(train).tolist(), txt)
-with open("data/testing_data.txt", "w") as txt:
+with open("data/0417/testing_data.txt", "w") as txt:
     json.dump(np.array(test).tolist(), txt)
 
 # PART 3: BUILD TRAINING/TESTING LABELS FOR ALL PARTICIPANTS
@@ -59,8 +59,8 @@ for p in range(p_count):
     train_labels_p = [1 if i == p else 0 for i in train_participants]
     test_labels_p = [1 if i == p else 0 for i in test_participants]
 
-    with open("data/training_labels_p" + str(p) + ".txt", "w") as txt:
+    with open("data/0417/training_labels_p" + str(p) + ".txt", "w") as txt:
         json.dump(train_labels_p, txt)
 
-    with open("data/testing_labels_p" + str(p) + ".txt", "w") as txt:
+    with open("data/0417/testing_labels_p" + str(p) + ".txt", "w") as txt:
         json.dump(test_labels_p, txt)
