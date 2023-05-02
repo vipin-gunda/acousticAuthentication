@@ -74,6 +74,6 @@ model2.summary()
 
 # PART 5: SAVE CNN MODEL
 # https://www.tensorflow.org/guide/keras/save_and_serialize
-model2.save('models/p'+str(participant_number)+"_e"+str(expression_index))
+model2.save('models/p'+str(participant_number)+"_e")
 
 # TODO: LOAD MODEL AND RUN ON DATASET FOR EXTRACTED FEATURES
