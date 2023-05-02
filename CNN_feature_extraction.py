@@ -2,7 +2,7 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.keras import datasets, layers, models
+from keras import datasets, layers, models
 from keras.models import Model
 
 #https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
