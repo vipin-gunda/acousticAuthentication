@@ -12,7 +12,7 @@ from keras.models import Model
 # need to double check on shape of data needed
 
 # ADJUSTABLE PARAMS: PARTICIPANT AND EXPRESSION NUMBER
-participant_number = 1
+participant_number = 2
 session_date = "0417"
 # expression_index = 0
 
@@ -27,7 +27,8 @@ training_labels_path = 'data/' + session_date + '/training_labels_p' + \
 with open(training_data_path) as f:
     content = f.read()
     if content:
-        training_data = np.array(json.loads(content)).reshape(-1, 1200, 209, 1)
+        training_data = np.array(json.loads(
+            content)).reshape(-1, 1200, 2166, 1)
 
 with open(training_labels_path) as f:
     content = f.read()
@@ -37,7 +38,7 @@ with open(training_labels_path) as f:
 with open(testing_data_path) as f:
     content = f.read()
     if content:
-        testing_data = np.array(json.loads(content)).reshape(-1, 1200, 209, 1)
+        testing_data = np.array(json.loads(content)).reshape(-1, 1200, 2166, 1)
 
 with open(testing_labels_path) as f:
     content = f.read()
