@@ -47,7 +47,7 @@ with open(testing_labels_path) as f:
         testing_labels = np.array(json.loads(content))
 
 # PART 2: DEFINE CNN
-input_shape = (None, 1200, 209, 1)
+input_shape = (None, 1200, 2166, 1)
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu',
           input_shape=(1200, 209, 1), data_format="channels_last"))
