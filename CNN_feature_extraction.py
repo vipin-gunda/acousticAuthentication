@@ -17,12 +17,10 @@ session_date = "0417"
 # expression_index = 0
 
 # PART 1: PARSE CORRESPONDING DATA
-testing_data_path = 'timestamps/' + session_date + '/timestamps_p' + \
-    str(participant_number) + ".txt"
+testing_data_path = 'data/' + session_date + '/testing_data' + ".txt"
 testing_labels_path = 'data/' + session_date + '/testing_labels_p' + \
     str(participant_number) + ".txt"
-training_data_path = 'timestamps/' + session_date + '/timestamps_p' + \
-    str(participant_number) + ".txt"
+training_data_path = 'data/' + session_date + '/training_data' + ".txt"
 training_labels_path = 'data/' + session_date + '/training_labels_p' + \
     str(participant_number) + ".txt"
 
