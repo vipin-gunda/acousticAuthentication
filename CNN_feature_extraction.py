@@ -49,7 +49,7 @@ with open(testing_labels_path) as f:
 input_shape = (None, 1200, 2166, 1)
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu',
-          input_shape=(1200, 209, 1), data_format="channels_last"))
+          input_shape=(1200, 2166, 1), data_format="channels_last"))
 model.add(layers.MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 model.add(layers.Dropout(0.25))
 model.add(layers.Flatten())
