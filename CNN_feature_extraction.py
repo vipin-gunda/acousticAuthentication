@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras import datasets, layers, models
 from keras.models import Model
+import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
 
 # step 1: get CNN to run in the first place (hard saving the features and model)
@@ -64,7 +66,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 history = model.fit(training_data, training_labels, epochs=10,
-                    validation_data=(testing_data, testing_labels))
+                    validation_data=(testing_data, testing_labels), batch_size=3)
 
 # PART 4: GET FEATURES AND WRITE THEM TO EXTRACTED_FEATURES FOLDER
 # Remove last Dense layer and just return the output
