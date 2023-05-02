@@ -28,7 +28,7 @@ def get_npy_frame(s_ind: int, e_ind: int, p_ind: int, npy: np.array):
     shift_seconds = int(random.uniform(0, 0.5)*50000/600)
     buffer = int(1.5*50000/600)
     duration = int(26*50000/600)
-    return npy[:, s_ind + buffer + shift_seconds: s_ind + buffer + duration + shift_seconds + 1]
+    return npy[:, s_ind + buffer + shift_seconds: s_ind + buffer + duration + shift_seconds]
 
 
 npy_file_path = '/data/vipin/acousticAuthentication/pilot_study/0417_data/'
@@ -46,10 +46,8 @@ for p in range(p_count):
             test += [npy_frame]
             test_participants += [p]
 
-print(len(train))
-print(len(train[0]))
-# make this 2166 ? refer to slack
-print(len(train[0][0]))
+if not os.path.exists('data'):
+    os.makedirs('data')
 
 with open("data/training_data.txt", "w") as txt:
     json.dump(np.array(train).tolist(), txt)
@@ -57,9 +55,6 @@ with open("data/testing_data.txt", "w") as txt:
     json.dump(np.array(test).tolist(), txt)
 
 # PART 3: BUILD TRAINING/TESTING LABELS FOR ALL PARTICIPANTS
-if not os.path.exists('data'):
-    os.makedirs('data')
-
 for p in range(p_count):
     train_labels_p = [1 if i == p else 0 for i in train_participants]
     test_labels_p = [1 if i == p else 0 for i in test_participants]
