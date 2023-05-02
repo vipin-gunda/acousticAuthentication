@@ -5,7 +5,7 @@ import tensorflow as tf
 from keras import datasets, layers, models
 from keras.models import Model
 
-#https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
+# https://www.kaggle.com/code/vishalkesti/feature-extraction-and-fine-tunning-cnn
 
 # step 1: get CNN to run in the first place (hard saving the features and model)
 # step 2: later add a CNN check - if CNN is being called and it was already saved (in models folder), just load that pre-trained model and build features from it
@@ -16,10 +16,14 @@ participant_number = 1
 expression_index = 0
 
 # PART 1: PARSE CORRESPONDING DATA
-testing_data_path = 'data/testing_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
-training_labels_path = 'data/training_labels_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
-training_data_path = 'data/training_data_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
-testing_labels_path = 'data/testing_labels_p'+str(participant_number)+"_e"+str(expression_index)+".txt"
+testing_data_path = 'data/testing_data_p' + \
+    str(participant_number)+"_e"+str(expression_index)+".txt"
+training_labels_path = 'data/training_labels_p' + \
+    str(participant_number)+"_e"+str(expression_index)+".txt"
+training_data_path = 'data/training_data_p' + \
+    str(participant_number)+"_e"+str(expression_index)+".txt"
+testing_labels_path = 'data/testing_labels_p' + \
+    str(participant_number)+"_e"+str(expression_index)+".txt"
 
 with open(training_data_path) as f:
     content = f.read()
@@ -35,16 +39,17 @@ with open(testing_data_path) as f:
     content = f.read()
     if content:
         testing_data = np.array(json.loads(content)).reshape(-1, 1200, 209, 1)
-        
+
 with open(testing_labels_path) as f:
     content = f.read()
     if content:
         testing_labels = np.array(json.loads(content))
-        
-# PART 2: DEFINE CNN 
+
+# PART 2: DEFINE CNN
 input_shape = (None, 1200, 209, 1)
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(1200, 209, 1), data_format="channels_last"))
+model.add(layers.Conv2D(32, (3, 3), activation='relu',
+          input_shape=(1200, 209, 1), data_format="channels_last"))
 model.add(layers.MaxPooling2D(pool_size=(2, 2), data_format="channels_last"))
 model.add(layers.Dropout(0.25))
 model.add(layers.Flatten())
@@ -58,7 +63,8 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.BinaryCrossentropy(),
               metrics=['accuracy'])
 
-history = model.fit(training_data, training_labels, epochs=10, validation_data=(testing_data, testing_labels))
+history = model.fit(training_data, training_labels, epochs=10,
+                    validation_data=(testing_data, testing_labels))
 
 # PART 4: GET FEATURES AND WRITE THEM TO EXTRACTED_FEATURES FOLDER
 # Remove last Dense layer and just return the output
