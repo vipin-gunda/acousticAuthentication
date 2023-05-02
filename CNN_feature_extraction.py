@@ -13,17 +13,18 @@ from keras.models import Model
 
 # ADJUSTABLE PARAMS: PARTICIPANT AND EXPRESSION NUMBER
 participant_number = 1
-expression_index = 0
+session_date = "0417"
+# expression_index = 0
 
 # PART 1: PARSE CORRESPONDING DATA
-testing_data_path = 'data/testing_data_p' + \
-    str(participant_number)+"_e"+str(expression_index)+".txt"
-training_labels_path = 'data/training_labels_p' + \
-    str(participant_number)+"_e"+str(expression_index)+".txt"
-training_data_path = 'data/training_data_p' + \
-    str(participant_number)+"_e"+str(expression_index)+".txt"
-testing_labels_path = 'data/testing_labels_p' + \
-    str(participant_number)+"_e"+str(expression_index)+".txt"
+testing_data_path = 'timestamps/' + session_date + '/testing_data_p' + \
+    str(participant_number) + ".txt"
+training_labels_path = 'timestamps/' + session_date + '/training_labels_p' + \
+    str(participant_number) + ".txt"
+testing_labels_path = 'timestamps/' + session_date + '/training_labels_p' + \
+    str(participant_number) + ".txt"
+training_data_path = 'timestamps/' + session_date + '/training_data_p' + \
+    str(participant_number) + ".txt"
 
 with open(training_data_path) as f:
     content = f.read()
