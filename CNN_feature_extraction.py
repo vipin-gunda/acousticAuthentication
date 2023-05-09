@@ -14,7 +14,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # need to double check on shape of data needed
 
 # ADJUSTABLE PARAMS: PARTICIPANT AND EXPRESSION NUMBER
-participant_number = 2
+participant_number = 3
 session_date = "0417"
 # expression_index = 0
 
